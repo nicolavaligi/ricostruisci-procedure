@@ -18,20 +18,11 @@ def items(value):
     return value
 
 
-def render(data):
-    if not isinstance(data, dict):
-        raise ValueError("Atteso un oggetto JSON")
-    sources = data["fonti"]
-    if not isinstance(sources, dict):
-        raise ValueError("fonti deve essere un oggetto")
-    source_lines = [f"- {inline(key)} — {inline(value)}" for key, value in sources.items()]
-    lines = [f"# {inline(data['titolo'])}", "", inline(data["contesto"]), ""]
-    lines.extend(["## Prerequisiti", ""])
-    lines.extend(f"- {inline(entry)}" for entry in items(data["prerequisiti"]))
-    steps = items(data["passi"])
+def render_steps(value, sources):
+    steps = items(value)
     if not steps:
         raise ValueError("Serve almeno un passo")
-    lines.extend(["", "## Procedura", ""])
+    lines = []
     for index, step in enumerate(steps, 1):
         if not isinstance(step, dict):
             raise ValueError(f"Passo {index}: atteso un oggetto")
@@ -48,6 +39,32 @@ def render(data):
         evidence = f" · Fonti {labels}" if labels else ""
         lines.append(f"{index}. **{inline(step['azione'])}** — {inline(step['esito'])} "
                      f"({status}{evidence})")
+    return lines
+
+
+def render(data):
+    if not isinstance(data, dict):
+        raise ValueError("Atteso un oggetto JSON")
+    sources = data["fonti"]
+    if not isinstance(sources, dict):
+        raise ValueError("fonti deve essere un oggetto")
+    source_lines = [f"- {inline(key)} — {inline(value)}" for key, value in sources.items()]
+    lines = [f"# {inline(data['titolo'])}", "", inline(data["contesto"]), ""]
+    lines.extend(["## Prerequisiti", ""])
+    lines.extend(f"- {inline(entry)}" for entry in items(data["prerequisiti"]))
+    lines.extend(["", "## Procedura", "", *render_steps(data["passi"], sources)])
+    variants = items(data.get("varianti", []))
+    if variants:
+        lines.extend(["", "## Varianti", ""])
+    for variant in variants:
+        if not isinstance(variant, dict):
+            raise ValueError("Variante: atteso un oggetto")
+        lines.extend([
+            f"### {inline(variant['condizione'])}", "",
+            *render_steps(variant["passi"], sources), "",
+        ])
+    if variants:
+        lines.pop()
     if source_lines:
         lines.extend(["", "## Fonti", "", *source_lines])
     pending = items(data["punti_aperti"])
