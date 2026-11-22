@@ -34,3 +34,5 @@ Per una consegna Markdown ripetibile, prepara un JSON con questa struttura. Usa 
 ```
 
 Il campo `varianti` è facoltativo. Gli stati ammessi sono `osservato`, `inferito` e `da verificare`. Le osservazioni e le inferenze richiedono almeno una fonte. Esegui `python3 scripts/render_procedura.py osservazioni.json` dalla cartella della skill e salva l'output dove richiesto. Controlla la coerenza dei passi con le evidenze prima della consegna.
+
+Per confrontare due implementazioni, assegna a ogni passo osservato un `id` univoco anche fra le varianti. Registra a parte le osservazioni della nuova implementazione con gli stessi ID e fonti proprie. Usa `python3 scripts/workflow.py confronta riferimento.json implementazione.json`. Mantieni coerente la formulazione degli esiti perché il confronto è testuale.
