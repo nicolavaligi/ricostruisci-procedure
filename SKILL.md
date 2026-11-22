@@ -1,38 +1,36 @@
 ---
-name: ricostruisci-procedure
-description: Ricostruisce e documenta workflow funzionali di siti e app da osservazioni autorizzate, manuali, registrazioni o codice disponibile. Usa quando l'utente vuole capire, ripetere o migrare una procedura esistente.
+name: retroengine-pro
+description: Reconstruct and compare functional website and app workflows using authorized observations, recordings, manuals, or source code. Use for documenting, reproducing, or migrating an existing procedure.
 ---
 
-Leggi [il prompt operativo](references/prompt.md) e applicalo allo scenario richiesto. Parti dalle fonti fornite e, se necessario, osserva il flusso tramite gli strumenti autorizzati. Per app desktop senza accesso diretto usa registrazioni, schermate o manuali. Registra anche il ruolo, la versione se nota e il punto fino al quale hai verificato direttamente il flusso.
+Read the [working prompt](references/prompt.md) and apply it to the scenario. Start with the supplied sources. Use authorized tools when you need to observe the workflow. For desktop apps without direct access, use recordings, screenshots, or manuals. Record the user role, the version when known, and the last state you verified directly.
 
-Consulta [i metodi per software, formati e dati](references/metodi.md) quando devi confrontare evidenze statiche e dinamiche, verificare un'esportazione o ricostruire uno schema.
+Consult the [analysis methods](references/methods.md) when comparing runtime behavior with static evidence, checking an export, or reconstructing a data schema. Stop before external changes that lack authorization and record the last observable state.
 
-Descrivi le alternative in `varianti` con una condizione e una sequenza di passi, oppure inseriscile tra i punti aperti. Fermati prima di effetti esterni privi di autorizzazione e registra l'ultimo stato osservabile.
-
-Per una consegna Markdown ripetibile, prepara un JSON con questa struttura. Usa identificativi brevi e indica il punto preciso dell'evidenza nel valore di ogni fonte.
+Use the following JSON format for a reproducible Markdown report. Give each source a short identifier and a precise locator.
 
 ```json
 {
-  "titolo": "Esportazione ordini",
-  "contesto": "Demo, ruolo operatore",
-  "prerequisiti": ["Almeno un ordine di prova"],
-  "fonti": {"V1": "Registrazione demo, 00:12"},
-  "passi": [
-    {"azione": "Seleziona Esporta", "esito": "Compare il formato CSV", "stato": "osservato", "fonti": ["V1"]}
+  "title": "Export orders",
+  "context": "Demo, operator account",
+  "prerequisites": ["One test order"],
+  "sources": {"V1": "Demo recording, 00:12"},
+  "steps": [
+    {"id": "export.format", "action": "Open Export", "outcome": "The menu includes CSV", "status": "observed", "sources": ["V1"]}
   ],
-  "varianti": [
+  "variants": [
     {
-      "condizione": "L'elenco degli ordini è vuoto",
-      "passi": [
-        {"azione": "Apri il menu Esporta", "esito": "Disponibilità del CSV da controllare", "stato": "da verificare", "fonti": []}
+      "condition": "The order list is empty",
+      "steps": [
+        {"action": "Open Export", "outcome": "Check whether CSV is available", "status": "unverified", "sources": []}
       ]
     }
   ],
-  "punti_aperti": ["Comportamento senza ordini"],
-  "verifica": "Esaminata la registrazione demo"
+  "open_questions": ["Check which roles can export"],
+  "verification": "Reviewed the demo recording"
 }
 ```
 
-Il campo `varianti` è facoltativo. Gli stati ammessi sono `osservato`, `inferito` e `da verificare`. Le osservazioni e le inferenze richiedono almeno una fonte. Esegui `python3 scripts/render_procedura.py osservazioni.json` dalla cartella della skill e salva l'output dove richiesto. Controlla la coerenza dei passi con le evidenze prima della consegna.
+The `variants` field is optional. Steps use `observed`, `inferred`, or `unverified`. An observed or inferred step needs at least one source. Run `python3 scripts/workflow.py spec observations.json` from the repository root and check the result against the evidence.
 
-Per confrontare due implementazioni, assegna a ogni passo osservato un `id` univoco anche fra le varianti. Registra a parte le osservazioni della nuova implementazione con gli stessi ID e fonti proprie. Usa `python3 scripts/workflow.py confronta riferimento.json implementazione.json`. Mantieni coerente la formulazione degli esiti perché il confronto è testuale.
+For comparison, give every observed step a unique `id` across the main workflow and variants. Record the new implementation separately with the same IDs and its own evidence. Run `python3 scripts/workflow.py compare baseline.json candidate.json`. Keep outcome wording consistent because the comparison is textual.

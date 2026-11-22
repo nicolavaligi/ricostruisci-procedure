@@ -1,0 +1,24 @@
+{
+  "title": "Export orders",
+  "context": "Fictional scenario with one order and an operator account",
+  "prerequisites": ["One test order"],
+  "sources": {"DEMO": "Fictional export recording, 00:12–00:20"},
+  "steps": [
+    {
+      "id": "export.format",
+      "action": "Open Export",
+      "outcome": "The menu includes CSV",
+      "status": "observed",
+      "sources": ["DEMO"]
+    },
+    {
+      "id": "export.download",
+      "action": "Select CSV",
+      "outcome": "A CSV with one data row is downloaded",
+      "status": "observed",
+      "sources": ["DEMO"]
+    }
+  ],
+  "open_questions": ["Check what happens when the order list is empty"],
+  "verification": "Fictional example for trying the CLI"
+}

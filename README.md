@@ -1,22 +1,24 @@
-# Ricostruisci procedure
+# retroengine_pro
 
-Una skill Codex e una CLI Python per descrivere un workflow di un sito o di un'app e verificare se una tua implementazione riproduce gli esiti osservati.
+A Codex skill and Python CLI for documenting website and app workflows and comparing observed outcomes across implementations.
 
-1. **Studia** il flusso con schermate, registrazioni, manuali o codice che puoi consultare. Annota azione, esito e fonte in un file JSON.
-2. **Genera la specifica** e usala come brief per costruire il tuo workflow. [Schema delle osservazioni](SKILL.md)
-3. **Verifica** la nuova implementazione con gli stessi scenari e registra gli esiti in un secondo JSON. Riusa gli ID dei passi e cita le fonti della nuova prova.
+1. **Study** the workflow using authorized screenshots, recordings, manuals, or source code. Record actions, outcomes, and evidence in JSON.
+2. **Specify** the workflow in Markdown and use it as a brief for your own implementation. [Evidence schema](SKILL.md)
+3. **Verify** the implementation using the same scenarios. Record fresh evidence in a second JSON file and reuse the step IDs.
 
-## Prova locale
+## Quick start
 
-Servono Python 3.9 o superiore e il contenuto del repository.
+Use Python 3.9 or later. From the repository root:
 
 ```bash
-python3 scripts/workflow.py specifica examples/ordini.json > specifica.md
-python3 scripts/workflow.py confronta examples/ordini.json examples/ordini.json
+python3 scripts/workflow.py spec examples/orders.json > specification.md
+python3 scripts/workflow.py compare examples/orders.json examples/orders.json
 ```
 
-Il secondo comando confronta il campione fittizio con sé stesso. Stampa due esiti conformi. Per provare una differenza, copia il JSON in un altro file, cambia un campo `esito` e passa la copia come secondo argomento.
+The second command compares the fictional example with itself and reports two matches. To try a mismatch, copy the JSON, change an `outcome`, and use the copy as the second argument.
 
-Il confronto usa gli esiti osservati con lo stesso `id` e normalizza gli spazi. Usa lo stesso vocabolario nei due file, per esempio `Il menu include CSV`. Gli esiti diversi o senza una corrispondente osservazione producono codice di uscita 1. Gli ID aggiuntivi sono informativi. Gli input non validi producono codice 2.
+The CLI compares observed outcomes by `id` after normalizing whitespace. Use consistent wording in both files. An observed outcome that differs or has no comparable observation returns exit code 1. Extra candidate observations are informational. Invalid input returns exit code 2.
 
-L'osservazione e l'implementazione si svolgono fuori dalla CLI. I comandi lavorano sui JSON locali e scrivono i report su standard output. Il [prompt operativo](references/prompt.md) guida il lavoro con Codex.
+The CLI reads local JSON and writes reports to standard output. Evidence collection and implementation happen separately. The [working prompt](references/prompt.md) guides those steps with Codex.
+
+Earlier versions used Italian command names and JSON fields. Use [the current schema](SKILL.md) when migrating an existing evidence file.
